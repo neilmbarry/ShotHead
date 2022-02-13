@@ -1,0 +1,14 @@
+{
+  "name": "shit-head",
+  "version": "1.0.0",
+  "description": "A simple card game",
+  "main": "index.html",
+  "scripts": {
+    "sass:compile": "node-sass main.scss style.css -w"
+  },
+  "author": "Neil Barry",
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^7.0.1"
+  }
+}
