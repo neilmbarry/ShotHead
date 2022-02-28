@@ -19,30 +19,27 @@ cards.forEach((card) =>
 //   DEFINE PLAY BEST CARD [X]
 //   (Reduce array of available cards to valid cards and choose the lowest possible card to play)
 //   DEFINE WINNER & LOSER [X]
-
-//   TIDY UP PLAY CARD (HAND / FACE UP / FACE DOWN) [ ]
-//   ABSTRACT SIMPLE REPETITIVE FUNCTIONS OUT OF CLASSES [ ]
-//   TIDY UP CARD GENERATION [ ]
-
-//   ALLOW RULES OBJECT PARAMETER [ ]
-
 //   SELECT BEST CARDS FOR FACE UP FROM OPEN [X]
-//
-//   RECEIVE MULTIPLE PLAYERS [ ]
-//   ALLOW MULTIDIRECTIONAL PLAY [ ]
-//   REDEFINE POWER CARD RULES [ ]
-//
-//   DEFINE WILDCARD (JOKER) [ ]
-
-//   PLAY 4 OF A KIND AT ANY TIME (LIKE A TEN)  [ ]
-//   DEALER DETERMINES PLAYER WITH LOWEST STARTING HAND [ ]
-//   DISALLOW FINISHING ON A POWER CARD OR 4OAK OR SKIP-BACK-PENULTIMATE CARD [ ]
-
 // BUG [ 4 OF A KIND 5s SWITCHES THE PLAYER] [X]
 // BUG [ CANT PLAY POWER CARD ON AN 8] [X]
 // TODO [PLAY FACE DOWN RANDOMLY EVEN IF NOT LEGAL] [X]
 // TODO [PICK UP LAST FACE UP WITH STACK] [X]
 // TODO [HAVE PICK VALID CARD ONLY PLAY SINGLE POWER CARDS AT A TIME] [X]
+
+//   PLAY 4 OF A KIND AT ANY TIME (LIKE A TEN)  [ ]
+//   DEALER DETERMINES PLAYER WITH LOWEST STARTING HAND [ ]
+//   DISALLOW FINISHING ON A POWER CARD OR 4OAK OR SKIP-BACK-PENULTIMATE CARD [ ]
+
+//   RECEIVE MULTIPLE PLAYERS [ ]
+//   ALLOW MULTIDIRECTIONAL PLAY [ ]
+//   DEFINE WILDCARD (JOKER) [ ]
+
+//   TIDY UP PLAY CARD (HAND / FACE UP / FACE DOWN) [ ]
+//   ABSTRACT SIMPLE REPETITIVE FUNCTIONS OUT OF CLASSES [ ]
+//   TIDY UP CARD GENERATION [ ]
+//   REDEFINE POWER CARD RULES [ ]
+//   ALLOW RULES OBJECT PARAMETER [ ]
+
 // ADD 'ACE OF NEIL DIAMONDS' [ ]
 
 //
@@ -66,113 +63,167 @@ class Player {
   hasFaceDownCards() {
     return !(this.faceDownCards.length === 0);
   }
-
   hasInHandCards() {
     return !(this.inHandCards.length === 0);
   }
-
   hasFaceUpCards() {
     return !(this.faceUpCards.length === 0);
   }
 
   playingHand() {
-    if (this.hasInHandCards()) return "inHandCards";
-    if (this.hasFaceUpCards()) return "faceUpCards";
-    if (this.hasFaceDownCards()) return "faceDownCards";
+    // if (this.hasInHandCards()) return "inHandCards";
+    if (this.hasInHandCards()) return this.inHandCards;
+    if (this.hasFaceUpCards()) return this.faceUpCards;
+    if (this.hasFaceDownCards()) return this.faceDownCards;
     return null;
   }
-  playCards(...indexes) {
+  setPlayingHand(cards) {
+    if (this.hasInHandCards()) return (this.inHandCards = cards);
+    if (this.hasFaceUpCards()) return (this.faceUpCards = cards);
+    if (this.hasFaceDownCards()) return (this.faceDownCards = cards);
+  }
+  playCards(cards) {
+    // Check active player
+    // console.log(cards);
     if (!this.active) {
       return console.log(this.name + ", it is not your turn!");
     }
-
-    const cards = indexes.map((index) => this[this.playingHand()][index]);
-
+    // Check cards are in playing hand
+    // Check cards are the same value
     if (!allCardsHaveEqualValue(cards)) {
-      return "Must be same value cards";
+      return console.log("Must be same value cards.");
     }
-    if (this.playingHand() === "faceDownCards") {
+    // Check if playing blind card
+    if (!this.hasFaceUpCards() && !this.hasInHandCards()) {
       const legalMove = this.dealer.checkLegalMove(cards[0]);
+      // console.log(this.playingHand());
+      const updatedHand = this.playingHand().filter((card) => {
+        const cardNames = cards.map((card) => card.name);
+        return !cardNames.includes(card.name);
+      });
+      // console.log(updatedHand);
+      this.setPlayingHand(updatedHand);
       console.log(
         `${this.name} has played a ${cards[0].value} of ${cards[0].suit}.`
       );
       this.dealer.addCardsToStack([cards[0]]);
-      this.faceDownCards = this.faceDownCards.filter(
-        (card, i) => !indexes.includes(i)
-      );
+
       if (!legalMove) {
         this.dealer.switchActivePlayer();
         return this.pickUpStack();
       }
+      this.dealer.checkWinner(this);
       return;
     }
-    if (this.dealer.checkLegalMove(cards[0])) {
-      const cardsPlayedString = cards
-        .map((card) => `a ${card.value} of ${card.suit}`)
-        .join(", ");
-
-      console.log(`${this.name} has played ${cardsPlayedString}.`);
-
-      this.dealer.addCardsToStack(cards);
-
-      switch (this.playingHand()) {
-        case "inHandCards":
-          this.inHandCards = this.inHandCards.filter(
-            (card, i) => !indexes.includes(i)
-          );
-          break;
-        case "faceUpCards":
-          this.faceUpCards = this.faceUpCards.filter(
-            (card, i) => !indexes.includes(i)
-          );
-          break;
-        case "faceDownCards":
-          this.faceDownCards = this.faceDownCards.filter(
-            (card, i) => !indexes.includes(i)
-          );
-          break;
-      }
-
-      if (!this.playingHand()) {
-        // return console.log(`${this.name} is the WINNER!!!`);
-        return;
-      }
-
-      // CHECK IF FEWER THAN 3 CARDS IN HAND
-      // PICK UP THAT AMOUNT
-
-      if (this.inHandCards.length === 0) {
-        this.drawCardFromDeck(3);
-      }
-      if (this.inHandCards.length === 1) {
-        this.drawCardFromDeck(2);
-      }
-      if (this.inHandCards.length === 2) {
-        this.drawCardFromDeck(1);
-      }
-
-      // this.drawCardFromDeck(indexes.length);
-      /// ------ NEED TO SOFT CODE ------ ////
-
-      return;
+    // Check move is legal
+    if (!this.dealer.checkLegalMove(cards[0])) {
+      return console.log("That is not a legal move.");
     }
-    console.log(`${this.name}, that is not a legal move`);
-    return;
+    // Move cards from player to stack and log
+    const updatedHand = this.playingHand().filter((card) => {
+      const cardNames = cards.map((card) => card.name);
+      return !cardNames.includes(card.name);
+    });
+    this.setPlayingHand(updatedHand);
+    this.dealer.addCardsToStack(cards);
+    const cardsPlayedString = cards
+      .map((card) => `a ${card.value} of ${card.suit}`)
+      .join(", ");
+    console.log(`${this.name} has played ${cardsPlayedString}.`);
+    // If player has less than 3 cards, pick up
+    if (this.playingHand()?.length < 3) {
+      const cardsToPickUp = 3 - this.playingHand().length;
+      this.drawCardFromDeck(cardsToPickUp);
+    }
+    this.dealer.checkWinner(this);
   }
+  // playCards(...indexes) {
+  //   if (!this.active) {
+  //     return console.log(this.name + ", it is not your turn!");
+  //   }
+
+  //   const cards = indexes.map((index) => this.playingHand()[index]);
+
+  //   if (!allCardsHaveEqualValue(cards)) {
+  //     return "Must be same value cards";
+  //   }
+  //   if (this.playingHand() === "faceDownCards") {
+  //     const legalMove = this.dealer.checkLegalMove(cards[0]);
+  //     console.log(
+  //       `${this.name} has played a ${cards[0].value} of ${cards[0].suit}.`
+  //     );
+  //     this.dealer.addCardsToStack([cards[0]]);
+  //     this.faceDownCards = this.faceDownCards.filter(
+  //       (card, i) => !indexes.includes(i)
+  //     );
+  //     if (!legalMove) {
+  //       this.dealer.switchActivePlayer();
+  //       return this.pickUpStack();
+  //     }
+  //     return;
+  //   }
+  //   if (this.dealer.checkLegalMove(cards[0])) {
+  //     const cardsPlayedString = cards
+  //       .map((card) => `a ${card.value} of ${card.suit}`)
+  //       .join(", ");
+
+  //     console.log(`${this.name} has played ${cardsPlayedString}.`);
+
+  //     this.dealer.addCardsToStack(cards);
+
+  //     switch (this.playingHand()) {
+  //       case "inHandCards":
+  //         this.inHandCards = this.inHandCards.filter(
+  //           (card, i) => !indexes.includes(i)
+  //         );
+  //         break;
+  //       case "faceUpCards":
+  //         this.faceUpCards = this.faceUpCards.filter(
+  //           (card, i) => !indexes.includes(i)
+  //         );
+  //         break;
+  //       case "faceDownCards":
+  //         this.faceDownCards = this.faceDownCards.filter(
+  //           (card, i) => !indexes.includes(i)
+  //         );
+  //         break;
+  //     }
+
+  //     if (!this.playingHand()) {
+  //       // return console.log(`${this.name} is the WINNER!!!`);
+  //       return;
+  //     }
+
+  //     // CHECK IF FEWER THAN 3 CARDS IN HAND
+  //     // PICK UP THAT AMOUNT
+
+  //     if (this.inHandCards.length === 0) {
+  //       this.drawCardFromDeck(3);
+  //     }
+  //     if (this.inHandCards.length === 1) {
+  //       this.drawCardFromDeck(2);
+  //     }
+  //     if (this.inHandCards.length === 2) {
+  //       this.drawCardFromDeck(1);
+  //     }
+
+  //     // this.drawCardFromDeck(indexes.length);
+  //     /// ------ NEED TO SOFT CODE ------ ////
+
+  //     return;
+  //   }
+  //   console.log(`${this.name}, that is not a legal move`);
+  //   return;
+  // }
   playValidCard() {
-    // const topStackWorth = this.dealer.getTopStackCard()
-    //   ? this.dealer.getTopStackCard().worth
-    //   : 0;
-    /// NEED TO HAVE VARIABLE TO DETERMINE INHAND / TABLE CARDS
-    // console.log(1);
-    if (dealer.winner) {
-      return console.error("GAME OVER");
+    if (this.dealer.winner) {
+      return;
     }
-    if (!this.playingHand()) {
-      dealer.winner = this.name;
-      console.log(`${this.name} is the WINNER!!!`);
-      return console.error("GAME OVER");
-    }
+    // if (!this.playingHand()) {
+    //   dealer.winner = this.name;
+    //   console.log(`${this.name} is the WINNER!!!`);
+    //   return console.error("GAME OVER");
+    // }
     if (!this.hasInHandCards() && this.hasFaceUpCards()) {
       console.warn(
         `${this.name} is on FACE UP CARDS! (${this.faceUpCards.length} remaining!)`
@@ -184,17 +235,17 @@ class Player {
       );
     }
 
-    if (this.playingHand() === "faceDownCards") {
-      return this.playCards(0);
+    if (!this.hasFaceUpCards() && !this.hasInHandCards()) {
+      return this.playCards([this.faceDownCards[0]]);
     }
     ////////////////////// TESTING ///////////////////
-    // console.log(this.name, " has ", this[this.playingHand()]);
+    // console.log(this.name, " has ", this.playingHand());
 
-    // const validCard = this[this.playingHand()].find((card) =>
+    // const validCard = this.playingHand().find((card) =>
     //   this.dealer.checkLegalMove(card)
     // );
 
-    const validCards = this[this.playingHand()].filter((card) =>
+    const validCards = this.playingHand().filter((card) =>
       this.dealer.checkLegalMove(card)
     );
 
@@ -218,8 +269,8 @@ class Player {
     //   return this.pickUpStack();
     // }
     // console.log(validCard, "<---- VALID CARD");
-    let validCardMultiples = this[this.playingHand()].filter((card) => {
-      // console.log(this.name, this[this.playingHand()]);
+    let validCardMultiples = this.playingHand().filter((card) => {
+      // console.log(this.name, this.playingHand());
       // console.log(card, validCard);
       return card.value == sortedValidCards[0].value;
     });
@@ -227,13 +278,15 @@ class Player {
       validCardMultiples = [validCardMultiples[0]];
     }
     // console.log("Valid card is: ", validCard);
-    // const indexOfValidCard = this[this.playingHand()].indexOf(validCard);
+    // const indexOfValidCard = this.playingHand().indexOf(validCard);
 
     const indexesOfValidCards = validCardMultiples.map((card) =>
-      this[this.playingHand()].indexOf(card)
+      this.playingHand().indexOf(card)
     );
     // console.log(indexOfValidCard, "idex of");
-    this.playCards(...indexesOfValidCards);
+    // console.log(validCardMultiples);
+    this.playCards(validCardMultiples);
+    // this.playCards(...indexesOfValidCards);
   }
   pickUpStack() {
     console.error(
@@ -305,7 +358,13 @@ class Dealer {
     const deck = [];
     suits.forEach((suit) => {
       cardValuePairs.forEach((value) => {
-        deck.push({ value: value[0], suit, worth: value[1], power: value[2] });
+        deck.push({
+          value: value[0],
+          suit,
+          worth: value[1],
+          power: value[2],
+          name: value[0] + suit,
+        });
       });
     });
     this.deck = deck;
@@ -433,6 +492,15 @@ class Dealer {
     this.players[0].active = true;
     console.warn(`Dealer has determined ${this.players[0].name} to start.`);
   }
+  checkWinner(player) {
+    if (!player.playingHand()) {
+      this.winner = player;
+      console.log(`${player.name} is the WINNER!!!`);
+      console.error("GAME OVER");
+      return true;
+    }
+    return false;
+  }
 }
 
 const suits = ["Hearts", "Clubs", "Diamonds", "Spades"];
@@ -477,9 +545,10 @@ dealer.startActivePlater();
 const interval = setInterval(() => {
   if (!checkWinner()) {
     const activePlayer = dealer.players.find((player) => player.active);
+    // console.log(activePlayer);
     activePlayer.playValidCard();
   }
-}, 10);
+}, 100);
 
 const checkWinner = () => {
   if (dealer.winner) {
