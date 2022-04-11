@@ -40,10 +40,36 @@ body {
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.303);
   transition: all ease 0.3s;
   border-radius: 6px;
+  overflow: hidden;
   cursor: pointer;
   z-index: 1000;
   position: relative;
-  //   border: 1px solid white;
+  border: 1px solid white;
+  &-deck {
+    position: absolute;
+    border: 1px solid white;
+    &-bottom {
+      transform: translateX(7px);
+    }
+    &-middle_lower {
+      transform: translateX(5px);
+    }
+    &-middle_upper {
+      transform: translateX(3px);
+    }
+    &-top {
+      transform: translateX(1px);
+    }
+    // &:hover {
+    //   user-select: none;
+    //   transform: translateY(0);
+    //   box-shadow: 2px 5px 4px rgba(0, 0, 0, 0.255);
+    //   z-index: 20;
+    // }
+  }
+  &-stack {
+    position: absolute;
+  }
   &:hover {
     transform: translateY(-4px);
     box-shadow: 2px 5px 4px rgba(0, 0, 0, 0.255);
@@ -61,7 +87,8 @@ body {
     // height: 100%;
     // width: 100%;
     // background-color: rgb(255, 255, 255);
-    background-color: rgba(137, 43, 226, 0.295);
+    background-color: rgb(95, 158, 160);
+    border: 1px solid white;
     position: absolute;
     top: 0;
     left: 0;
@@ -113,6 +140,36 @@ body {
   }
 }
 
+.stack-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.burn-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.rotate {
+  &-1 {
+    transform: rotate(-30deg) scale(1.4);
+  }
+  &-2 {
+    transform: rotate(10deg) scale(1.4);
+  }
+  &-3 {
+    transform: rotate(40deg) scale(1.4);
+  }
+  &-4 {
+    transform: rotate(-20deg) scale(1.4);
+  }
+}
+
 .deck {
   background-color: rgba(137, 43, 226, 0.295);
   margin: 3rem auto;
@@ -122,6 +179,12 @@ body {
   width: 7rem;
   border-radius: 6px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.303);
+  &-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .table {
@@ -133,7 +196,7 @@ body {
 
   &-dealer {
     display: flex;
-    // min-height: 60vh;
+    height: 16rem;
 
     align-items: center;
     // justify-content: space-between;
@@ -142,7 +205,7 @@ body {
   &-burner {
     text-align: center;
     background-color: rgba(222, 184, 135, 0.201);
-    // height: 30vh;
+    height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -162,12 +225,13 @@ body {
   &-deck {
     text-align: center;
     background-color: rgba(150, 222, 135, 0.201);
-    // height: 30vh;
+    height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     border-radius: 0 10px 10px 0;
+    position: relative;
   }
   &-cards {
     display: flex;

@@ -11,7 +11,7 @@
       src="https://kit.fontawesome.com/7dff0a5432.js"
       crossorigin="anonymous"
     ></script>
-    <script src="app.js" defer></script>
+    <script src="app.js" defer type="module"></script>
   </head>
   <body>
     <nav class="nav">
@@ -21,43 +21,77 @@
       <div class="table">
         <div class="table-dealer">
           <div class="table-burner">
-            <div class="deck">Burn</div>
+            <div class="burn-container">
+              <!-- <div class="deck">Burn</div> -->
+              <div class="card card-stack rotate-1"></div>
+              <div class="card card-stack rotate-3"></div>
+              <div class="card card-stack rotate-2"></div>
+            </div>
           </div>
           <div class="table-stack">
-            <div class="deck">Stack</div>
+            <div class="stack-container">
+              <div class="card card-stack rotate-1">
+                <img src="./card-images/3Spades.png" alt="" />
+              </div>
+              <div class="card card-stack rotate-2">
+                <img src="./card-images/3Diamonds.png" alt="" />
+              </div>
+              <div class="card card-stack rotate-3">
+                <img src="./card-images/9Spades.png" alt="" />
+              </div>
+              <div class="card card-stack rotate-4">
+                <img src="./card-images/KingDiamonds.png" alt="" />
+              </div>
+              <!-- <div class="deck">Stack</div> -->
+            </div>
           </div>
           <div class="table-deck">
-            <div class="deck">Deck</div>
+            <div class="deck-container">
+              <div class="card card-deck card-deck-bottom"></div>
+              <div class="card card-deck card-deck-middle_lower"></div>
+              <div class="card card-deck card-deck-middle_upper"></div>
+              <div class="card card-deck card-deck-top"></div>
+            </div>
           </div>
         </div>
         <div class="table-cards">
           <div class="table-cards-player1 table-cards-player">
             <div class="card-container">
-              <div class="card"><img src="./card-images/2d.png" alt="" /></div>
+              <div class="card">
+                <!-- <img src="./card-images/2Diamonds.png" alt="" /> -->
+              </div>
               <div class="card card-behind"></div>
             </div>
             <div class="card-container">
-              <div class="card"><img src="./card-images/5s.png" alt="" /></div>
+              <div class="card">
+                <!-- <img src="./card-images/5Spades.png" alt="" /> -->
+              </div>
               <div class="card card-behind"></div>
             </div>
             <div class="card-container">
-              <div class="card"><img src="./card-images/qd.png" alt="" /></div>
+              <div class="card">
+                <!-- <img src="./card-images/QueenDiamonds.png" alt="" /> -->
+              </div>
               <div class="card card-behind"></div>
             </div>
           </div>
           <div class="table-cards-player2 table-cards-player">
             <div class="card-container">
               <div class="card">
-                <img src="./card-images/10h.png" alt="card" />
+                <!-- <img src="./card-images/10Hearts.png" alt="card" /> -->
               </div>
               <div class="card card-behind"></div>
             </div>
             <div class="card-container">
-              <div class="card"><img src="./card-images/9d.png" alt="" /></div>
+              <div class="card">
+                <!-- <img src="./card-images/9Diamonds.png" alt="" /> -->
+              </div>
               <div class="card card-behind"></div>
             </div>
             <div class="card-container">
-              <div class="card"><img src="./card-images/Kh.png" alt="" /></div>
+              <div class="card">
+                <!-- <img src="./card-images/KingHearts.png" alt="" /> -->
+              </div>
               <div class="card card-behind"></div>
             </div>
           </div>
@@ -67,15 +101,15 @@
       <div class="players">
         <div class="player1 player">
           <div class="player-title">PLAYER 1</div>
-          <div class="player-hand">
+          <div class="player-hand player-hand_1">
             <div class="card card-hand card-hand_1">
-              <img src="./card-images/4h.png" alt="" />
+              <img src="./card-images/4Hearts.png" alt="" />
             </div>
             <div class="card card-hand card-hand_2">
-              <img src="./card-images/6d.png" alt="" />
+              <img src="./card-images/6Diamonds.png" alt="" />
             </div>
             <div class="card card-hand card-hand_3">
-              <img src="./card-images/As.png" alt="" />
+              <img src="./card-images/AceSpades.png" alt="" />
             </div>
           </div>
           <div class="player-options player-options_active">PLAY SELECTED</div>
@@ -83,15 +117,15 @@
 
         <div class="player2 player">
           <div class="player-title">PLAYER 2</div>
-          <div class="player-hand">
+          <div class="player-hand player-hand_2">
             <div class="card card-hand card-hand_1">
-              <img src="./card-images/3c.png" alt="" />
+              <!-- <img src="./card-images/3Clubs.png" alt="" /> -->
             </div>
             <div class="card card-hand card-hand_2">
-              <img src="./card-images/7c.png" alt="" />
+              <!-- <img src="./card-images/7Clubs.png" alt="" /> -->
             </div>
             <div class="card card-hand card-hand_3">
-              <img src="./card-images/Jc.png" alt="" />
+              <!-- <img src="./card-images/JackClubs.png" alt="" /> -->
             </div>
           </div>
           <div class="player-options">WAIT...</div>
